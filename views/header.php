@@ -41,6 +41,7 @@
 			<li><a href="<?php echo URL ?>user" title="">USERS</a></li>
 			<li><a href="<?php echo URL ?>post" title="">POSTS</a></li>
 			<li><a href="<?php echo URL ?>result" title="">RESULT</a></li>
+			<li><a href="http://localhost/kovi/test" title="">TEST</a></li>
 			
 		</ul>
 	</nav>
