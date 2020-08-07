@@ -333,6 +333,106 @@ class Database extends PDO
         return $check;
     }
 
+
+    public function excelMultiInsert($filename,$data, $table, $allsheet = false)
+    {
+        $check     = false;
+    
+        if ($xlsx = SimpleXLSX::parse($_FILES[$filename]['tmp_name'])) {
+            //Will contain SQL snippets.
+            $rowsSQL = array();
+         
+            //Will contain the values that we need to bind.
+            $toBind = array();
+
+
+            if ($allsheet == false) {
+
+                $dim        = $xlsx->dimension();
+                $cols       = $dim[0];
+                $insertData = $xlsx->rows();
+                unset($insertData[0]);
+
+                //Loop through our $data array.
+                foreach($insertData as $arrayIndex => $row){
+                    $params = array();
+                    foreach($row as $key => $columnValue){
+                        $param = ":" . $data[$key] . $arrayIndex;
+                        $params[] = $param;
+                        $toBind[$param] = $columnValue; 
+                    }
+                    $rowsSQL[] = "(" . implode(", ", $params) . ")";
+                }
+
+                // print_r($attributes);
+                // print_r($rowsSQL);
+
+                //Construct our SQL statement
+                $query= "INSERT INTO `$table` (" . implode(", ", $data) . ") VALUES " . implode(", ", $rowsSQL);
+                // echo $query;
+                 
+                //Prepare our PDO statement.
+                $insert = $this->prepare($query);
+                 
+                //Bind our values.
+                foreach($toBind as $param => $val){
+                    $insert->bindValue($param, $val);
+                }
+                    
+                //Execute our statement (i.e. insert the data).
+                if ($insert->execute()) {
+                    $check = true;
+                }
+
+            } else {
+
+                $page  = count($xlsx->sheetNames());
+                $count = 1;
+                for ($a = 0; $a < $page; $a++) {
+                    $dim        = $xlsx->dimension($a);
+                    $cols       = $dim[0];
+                    $insertData = $xlsx->rows($a);
+                    unset($insertData[0]);
+
+                    //Loop through our $data array.
+                    foreach($insertData as $arrayIndex => $row){
+                        $params = array();
+                        foreach($row as $key => $columnValue){
+                            $param = ":" . $data[$key] . $arrayIndex;
+                            $params[] = $param;
+                            $toBind[$param] = $columnValue; 
+                        }
+                        $rowsSQL[] = "(" . implode(", ", $params) . ")";
+                    }
+                
+                    //Construct our SQL statement
+                    $query= "INSERT INTO `$table` (" . implode(", ", $data) . ") VALUES " . implode(", ", $rowsSQL);
+                 
+                    //Prepare our PDO statement.
+                    $insert = $this->prepare($query);
+                 
+                    //Bind our values.
+                    foreach($toBind as $param => $val){
+                        $insert->bindValue($param, $val);
+                    }
+                    
+                    //Execute our statement (i.e. insert the data).
+                    if ($insert->execute()) {
+                        $check = true;
+                    }
+
+                }
+
+            }
+
+        } else {
+            $check = SimpleXLSX::parseError();
+        }
+
+        return $check;
+        
+    }
+
     // $data=['rank','country','pol','est','world'];
     // csvInsert('excel',$data,'file');
     public function csvInsert($filename,$data, $table)

@@ -20,10 +20,12 @@ class Result_Model extends Model
 
     public function insertexcel($data)
     {
-        $column=['class','name','subject','mark','date'];
-        return $this->db->excelInsert($data,$column ,'result');
+        // $column=['class','name','subject','mark','date'];
+        // return $this->db->excelInsert($data,$column ,'result');
         // echo $data;
         // exit();
+        $column=['itemCode','itemName','categCode','groupCode','odtypeCode','odsubtypeCode'];
+        return $this->db->excelMultiInsert($data,$column ,'oditem');
 
     }
 

@@ -8,7 +8,7 @@ $(function() {
 	  if (input.files) {
             let filesAmount = input.files.length;
 
-            for (i = 0; i < filesAmount; i++) {
+            for (let i = 0; i < filesAmount; i++) {
             	let name = event.target.files[i].name;
 	            let lastDot = name.lastIndexOf('.');
 

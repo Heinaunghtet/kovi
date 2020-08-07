@@ -6,6 +6,6 @@
      */
 define('DBTYPE','mysql');
 define('DBHOST','localhost');
-define('DBNAME','kovi');
+define('DBNAME','ordnance');
 define('DBUSER','root');
 define('DBPWS','');
